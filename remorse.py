@@ -1,15 +1,6 @@
 from fastapi import FastAPI as fahh
-from pydantic import BaseModel as bm
 
 app = fahh()
-
-#TI: TextInput
-class TI(bm):
-    text: str
-
-#MI: MorseInput
-class MI(bm):
-    morse: str
 
 MORSE_CODE= {
     "A": ".-", "B": "-...", "C": "-.-.", "D": "-..", "E": ".",
@@ -18,32 +9,33 @@ MORSE_CODE= {
     "P": ".--.", "Q": "--.-", "R": ".-.", "S": "...", "T": "-",
     "U": "..-", "V": "...-", "W": ".--", "X": "-..-", "Y": "-.--",
     "Z": "--..", "0": "-----", "1": ".----", "2": "..---", "3": "...--",
-    "4": "....-", "5": "....", "6": "-....", "7": "--....", "8": "---..", 
+    "4": "....-", "5": ".....", "6": "-....", "7": "---..", "8": "---..", 
     "9": "----."
 }
 
 TEXT= {
     '.-': 'A', '-...': 'B', '-.-.': 'C', '-..': 'D', '.': 'E',
-   '..-.': 'F', '--.': 'G', '....': '5', '..': 'I', '.---': 'J',
-    '-.-': 'K', '.-..': 'L', '--': 'M', '-.': 'N', '---': 'O', '.--.': 'P',
-    '--.-': 'Q', '.-.': 'R', '...': 'S', '-': 'T', '..-': 'U', '...-': 'V',
-    '.--': 'W', '-..-': 'X', '-.--': 'Y', '--..': 'Z', '-----': '0', '.----': '1',
-    '..---': '2', '...--': '3', '....-': '4', '-....': '6', '--....': '7', '---..': '8',
+   '..-.': 'F', '--.': 'G', '....': 'H', '..': 'I', '.---': 'J',
+    '-.-': 'K', '.-..': 'L', '--': 'M', '-.': 'N', '---': 'O',
+    '.--.': 'P', '--.-': 'Q', '.-.': 'R', '...': 'S', '-': 'T', 
+    '..-': 'U', '...-': 'V', '.--': 'W', '-..-': 'X', '-.--': 'Y',
+    '--..': 'Z', '-----': '0', '.----': '1', '..---': '2', '...--': '3',
+    '....-': '4',  ".....": "5", '-....': '6', '--...': '7','---..': '8',
     '----.': '9'
 }
 
 #mte: Morse-code To English
 def mte(mi):
-    morse_split= tuple(mi.split("/"))
+    morse_words= tuple(mi.split("/"))
     words= ()
 
-    for word in morse_split:
-        words= tuple(word.split(' '))
+    for word in morse_words:
+        morse_letters= tuple(word.split(' '))
         result= ""
-        for morse_letters in words:
-            if morse_letters in TEXT:
-                result += TEXT[morse_letters]
-    words += (result,)
+        for morse_letter in morse_letters:
+            if morse_letter in TEXT:
+                result += TEXT[morse_letter]
+        words += (result,)
 
     return ' '.join(words)
 
@@ -53,11 +45,11 @@ def etm(ti):
     morse_words= ()
 
     for morse in text_split:
-        morse_words= tuple(morse.split(' '))
-        result= ()
-        for letters in MORSE_CODE:
-            if letters in MORSE_CODE:
-                result += MORSE_CODE[letters] + " "
+        letters= tuple(morse.upper())
+        result= ""
+        for letter in letters:
+            if letter in MORSE_CODE:
+                result += MORSE_CODE[letter] + " "
         morse_words += (result.strip(),)
 
     return '/'.join(morse_words)
@@ -69,19 +61,30 @@ def backend_alive():
         "backend": "alive, yayy"
     }
 
-@app.post("/morse-to-text")
-def morse_endpoint(input_morse: MI):
-    output_text= mte(input_morse.morse)
-    return{
-        "morse": input_morse.morse,
-        "text": output_text,
-    }
+@app.get("/morse-to-text")
+def morse_endpoint(input_morse: str=None):
+    if input_morse:
+        output_text= mte(input_morse)
+        return{
+            "morse": input_morse,
+            "text": output_text,
+        }
+    else:
+        return{
+            "incomplete request": "please add '?input_morse= YOUR_VALUE' at the end of this url to get the converted version:)",
+            "format": "seperate the words with a '/' and the letters with a ' '(yea a literal space)",
+        }
 
 
-@app.post("/text-to-morse")
-def text_endpoint(input_text: TI):
-    output_morse= etm(input_text.text)
-    return{
-        "text": input_text.text,
-        "morse": output_morse,
-    }
+@app.get("/text-to-morse")
+def text_endpoint(input_text: str=None):
+    if input_text:
+        output_morse= etm(input_text)
+        return{
+            "text": input_text,
+            "morse": output_morse,
+        }
+    else:
+        return{
+            "incomplete request": "please add '?input_text= YOUR_VALUE' at the end of this url to get the converted version:)",
+        }
