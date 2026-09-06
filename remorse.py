@@ -66,6 +66,8 @@ def backend_alive():
             <h1>Morse Code Translator</h1>
             <button onclick="window.location.href='/morse-to-text'">Morse to Text</button>
             <button onclick="window.location.href='/text-to-morse'">Text to Morse</button>
+            <p>for a more GUI click the below button, if you feel the url way is better, then you can use it too:)</p>
+            <button onclick="window.location.href='/docs'">FastAPI's docs page</button>
         </body>
     </html>
     """
