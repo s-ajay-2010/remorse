@@ -1,0 +1,10 @@
+[project]
+name = "remorse"
+version = "0.1.0"
+dependencies = [
+    "fastapi==0.141.1",
+    "uvicorn[standard]==0.41.0",
+]
+
+[tool.vercel]
+entrypoint = "remorse:app"
