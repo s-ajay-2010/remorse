@@ -15,11 +15,13 @@ This is an api which translates morse code to text and vice versa powered by Fas
 git clone https://github.com/s-ajay-2010/remorse.git
 cd remorse
 python -m venv venv
-#activate your venv with respect to whichever shell and OS you use. 
+```
+activate your venv with respect to whichever shell and OS you use. 
+```
 pip install -r requirements.txt
 uvicorn remorse:app --reload
-#open http://localhost:8000 .
 ```
+open http://localhost:8000 .
 
 
 AI Usage: Nil.
