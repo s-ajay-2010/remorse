@@ -1,6 +1,7 @@
-from fastapi import FastAPI as fahh
+from fastapi import FastAPI
+from fastapi.responses import HTMLResponse
 
-app = fahh()
+app = FastAPI()
 
 MORSE_CODE= {
     "A": ".-", "B": "-...", "C": "-.-.", "D": "-..", "E": ".",
@@ -25,6 +26,7 @@ TEXT= {
 }
 
 #mte: Morse-code To English
+#mi: Morse Input
 def mte(mi):
     morse_words= tuple(mi.split("/"))
     words= ()
@@ -40,6 +42,7 @@ def mte(mi):
     return ' '.join(words)
 
 #etm: English To Morse-code
+#ti: Text Input
 def etm(ti):
     text_split= tuple(ti.split(" "))
     morse_words= ()
@@ -55,11 +58,17 @@ def etm(ti):
     return '/'.join(morse_words)
 
 
-@app.get("/")
+@app.get("/", response_class=HTMLResponse)
 def backend_alive():
-    return{
-        "backend": "alive, yayy"
-    }
+    return """
+    <html>
+        <body style="text-align: center; margin-top: 50px; background-color: black; color: white;">
+            <h1>Morse Code Translator</h1>
+            <button onclick="window.location.href='/morse-to-text'">Morse to Text</button>
+            <button onclick="window.location.href='/text-to-morse'">Text to Morse</button>
+        </body>
+    </html>
+    """
 
 @app.get("/morse-to-text")
 def morse_endpoint(input_morse: str=None):
